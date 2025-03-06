@@ -7,72 +7,72 @@ from torchvision import models
 
 class ImageAnalyzer:
     def __init__(self, model_path='./models/glaucoma_model.pth'):
-        # Определение устройства
+        # Determine device (GPU or CPU)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Using device: {self.device}")
         
-        # Создание модели MobileNetV3Large для бинарной классификации
+        # Create MobileNetV3Large model for binary classification
         self.model = models.mobilenet_v3_large(pretrained=False)
-        self.model.classifier[-1] = torch.nn.Linear(1280, 2)  # 2 класса: с глаукомой и без
+        self.model.classifier[-1] = torch.nn.Linear(1280, 2)  # 2 classes: with/without glaucoma
         
-        # Загрузка весов модели
+        # Load model weights if available
         if model_path and os.path.exists(model_path):
             try:
                 self.model.load_state_dict(torch.load(model_path, map_location=self.device))
-                print(f"Модель успешно загружена из {model_path}")
-                self.model.eval()  # Переключение в режим оценки
+                print(f"Model successfully loaded from {model_path}")
+                self.model.eval()  # Switch to evaluation mode
             except Exception as e:
-                print(f"Ошибка загрузки модели: {e}")
-                print("Используем модель без предварительного обучения")
+                print(f"Error loading model: {e}")
+                print("Using model without pre-training")
         else:
-            print("Путь к модели не указан или файл не существует. Используем модель без предварительного обучения")
+            print("Model path not specified or file doesn't exist. Using model without pre-training")
         
-        # Перемещение модели на нужное устройство
+        # Move model to appropriate device
         self.model = self.model.to(self.device)
         
-        # Определение трансформаций для предобработки изображений
+        # Define transformations for image preprocessing
         self.transform = transforms.Compose([
             transforms.Resize((512, 512)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
         
-        # Названия классов
-        self.class_names = ['Без глаукомы', 'Глаукома']
+        # Class names
+        self.class_names = ['No Glaucoma', 'Glaucoma']
 
     def preprocess_image(self, image):
-        """Предобработка изображения для модели MobileNetV3"""
-        # Применение трансформаций
+        """Preprocess image for MobileNetV3 model"""
+        # Apply transformations
         img_tensor = self.transform(image)
-        # Добавление размерности батча
+        # Add batch dimension
         img_tensor = img_tensor.unsqueeze(0)
-        # Перемещение тензора на нужное устройство
+        # Move tensor to appropriate device
         img_tensor = img_tensor.to(self.device)
         return img_tensor
 
     def analyze(self, image):
-        """Анализ изображения и возврат результата"""
-        # Предобработка изображения
+        """Analyze image and return prediction results"""
+        # Preprocess image
         processed_image = self.preprocess_image(image)
         
-        # Выполнение предсказания
+        # Perform prediction
         with torch.no_grad():
             outputs = self.model(processed_image)
             probabilities = torch.nn.functional.softmax(outputs, dim=1)[0]
         
-        # Получаем индекс класса с максимальной вероятностью
+        # Get index of class with maximum probability
         _, predicted_class = torch.max(outputs, 1)
         class_idx = predicted_class.item()
         
-        # Преобразование тензора вероятностей в список
+        # Convert probability tensor to numpy array
         probabilities = probabilities.cpu().numpy()
         
-        # Формирование результата
+        # Format result
         result = {
             "class": self.class_names[class_idx],
             "confidence": float(probabilities[class_idx]),
             "probabilities": {self.class_names[i]: float(probabilities[i]) for i in range(len(self.class_names))},
-            "description": "Обнаружены признаки глаукомы" if class_idx == 1 else "Признаки глаукомы не обнаружены"
+            "description": "Glaucoma signs detected" if class_idx == 1 else "No glaucoma signs detected"
         }
         
         return result
