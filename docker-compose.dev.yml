@@ -1,0 +1,23 @@
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app  # bind mount для кода
+      - model_data:/app/models  # volume для моделей
+    environment:
+      - PYTHONPATH=/app
+      - WATCHFILES_FORCE_POLLING=true
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html  # bind mount для frontend
+
+volumes:
+  model_data:

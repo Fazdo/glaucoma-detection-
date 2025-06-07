@@ -3,12 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Analysis System</title>
+    <title data-en="Image Analysis System" data-ru="Система анализа изображений">Image Analysis System</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- ВЕРХНЯЯ ПОЛОСА С ИНФОРМАЦИЕЙ О КОМАНДЕ -->
+    <div class="top-header">
+        <div class="logo-section">
+            <img src="images/logo.png" alt="5+5=11 Team MAI" class="header-logo">
+        </div>
+        
+        <div class="team-info">
+            <span data-en="5+5=11 Team, Moscow Aviation Institute (MAI), 2025" 
+                  data-ru="Команда 5+5=11, Московский авиационный институт (МАИ), 2025">
+                5+5=11 Team, Moscow Aviation Institute (MAI), 2025
+            </span>
+        </div>
+        
+        <div class="language-selector">
+            <button id="langRu" class="lang-btn">RU</button>
+            <button id="langEn" class="lang-btn active">EN</button>
+        </div>
+    </div>
+    
     <div class="container">
-        <h1>Image Analysis System</h1>
+        <h1 data-en="Image Analysis System" data-ru="Система анализа изображений">Image Analysis System</h1>
         
         <div class="upload-container">
             <div class="upload-area" id="uploadArea">
@@ -17,24 +36,83 @@
                     <svg width="50" height="50" viewBox="0 0 24 24">
                         <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"></path>
                     </svg>
-                    <p>Click to upload or drag image here</p>
+                    <p data-en="Click to upload or drag image here" data-ru="Нажмите для загрузки или перетащите изображение сюда">Click to upload or drag image here</p>
                 </div>
                 <div class="preview-container" id="previewContainer" hidden>
                     <img id="imagePreview" src="#" alt="Preview">
                     <button id="removeImage" class="remove-btn">×</button>
                 </div>
             </div>
-            <button id="analyzeBtn" class="analyze-btn" disabled>Analyze Image</button>
+            <button id="analyzeBtn" class="analyze-btn" disabled data-en="Analyze Image" data-ru="Анализировать изображение">Analyze Image</button>
         </div>
         
         <div class="result-container" id="resultContainer" hidden>
-            <h2>Analysis Result</h2>
+            <h2 data-en="Analysis Result" data-ru="Результат анализа">Analysis Result</h2>
             <div id="resultContent" class="result-content"></div>
         </div>
         
         <div class="loader" id="loader" hidden>
             <div class="spinner"></div>
-            <p>Analyzing image...</p>
+            <p data-en="Analyzing image..." data-ru="Анализ изображения...">Analyzing image...</p>
+        </div>
+    </div>
+    
+    <!-- ПЛАВАЮЩАЯ КНОПКА ПОМОЩИ -->
+    <button class="fab-help" id="fabHelp" title="Help">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" fill="white"/>
+        </svg>
+    </button>
+    
+    <!-- МОДАЛЬНОЕ ОКНО С ИНСТРУКЦИЕЙ -->
+    <div class="modal-overlay" id="modalOverlay" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-en="How to use the system" data-ru="Как использовать систему">How to use the system</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="instruction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4 data-en="Upload Image" data-ru="Загрузите изображение">Upload Image</h4>
+                        <p data-en="Click on the upload area or drag and drop an eye image for glaucoma analysis" 
+                           data-ru="Нажмите на область загрузки или перетащите изображение глаза для анализа на глаукому">
+                            Click on the upload area or drag and drop an eye image for glaucoma analysis
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="instruction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4 data-en="Start Analysis" data-ru="Запустите анализ">Start Analysis</h4>
+                        <p data-en="Click the 'Analyze Image' button to begin the automated glaucoma detection process" 
+                           data-ru="Нажмите кнопку 'Анализировать изображение' для запуска автоматического обнаружения глаукомы">
+                            Click the 'Analyze Image' button to begin the automated glaucoma detection process
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="instruction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4 data-en="View Results" data-ru="Просмотрите результаты">View Results</h4>
+                        <p data-en="Review the analysis results including confidence level and detected condition" 
+                           data-ru="Ознакомьтесь с результатами анализа, включая уровень уверенности и обнаруженное состояние">
+                            Review the analysis results including confidence level and detected condition
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="instruction-note">
+                    <strong data-en="Note:" data-ru="Примечание:">Note:</strong>
+                    <span data-en="This system is for educational purposes. Always consult a medical professional for actual diagnosis." 
+                          data-ru="Эта система предназначена для образовательных целей. Всегда консультируйтесь с медицинским специалистом для постановки диагноза.">
+                        This system is for educational purposes. Always consult a medical professional for actual diagnosis.
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     
